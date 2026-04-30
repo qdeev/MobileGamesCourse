@@ -2,6 +2,8 @@ package com.mygdx.game.characters;
 
 import static com.mygdx.game.MyGdxGame.SCR_HEIGHT;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
@@ -18,6 +20,8 @@ public class Bird {
     int frameCounter;
     Texture[] framesArray;
 
+    Sound jumpSound;
+
     public Bird(int x, int y, int speed, int width, int height) {
         this.x = x;
         this.y = y;
@@ -27,11 +31,13 @@ public class Bird {
         frameCounter = 0;
 
         framesArray = new Texture[]{
-                new Texture("birdTiles/bird0.png"),
-                new Texture("birdTiles/bird1.png"),
-                new Texture("birdTiles/bird2.png"),
-                new Texture("birdTiles/bird1.png"),
+            new Texture("birdTiles/bird0.png"),
+            new Texture("birdTiles/bird1.png"),
+            new Texture("birdTiles/bird2.png"),
+            new Texture("birdTiles/bird1.png"),
         };
+
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.wav"));
     }
 
     public void setY(int y) {
@@ -41,6 +47,12 @@ public class Bird {
     public void onClick() {
         jump = true;
         jumpHeight = maxHeightOfJump + y;
+
+        // Воспроизведение звука прыжка
+        // 0.5f - громкость (от 0.0 до 1.0)
+        if (jumpSound != null) {
+            jumpSound.play(0.5f);
+        }
     }
 
     public void fly() {
@@ -70,6 +82,10 @@ public class Bird {
     public void dispose() {
         for (Texture texture : framesArray) {
             texture.dispose();
+        }
+
+        if (jumpSound != null) {
+            jumpSound.dispose();
         }
     }
 

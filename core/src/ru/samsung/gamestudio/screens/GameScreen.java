@@ -33,6 +33,10 @@ public class GameScreen extends ScreenAdapter {
     TextView scoreTextView;
     ButtonView pauseButton;
 
+    // Combo UI
+    TextView comboTextView;
+    TextView bonusTextView;
+
     // PAUSED state UI
     ImageView fullBlackoutView;
     TextView pauseTextView;
@@ -64,6 +68,9 @@ public class GameScreen extends ScreenAdapter {
         topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_IMG_PATH);
         liveView = new LiveView(305, 1215);
         scoreTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1215);
+        // Инициализация комбо текста
+        comboTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1150, "");
+        bonusTextView = new TextView(myGdxGame.largeWhiteFont, 250, 900, "");
         pauseButton = new ButtonView(
                 605, 1200,
                 46, 54,
@@ -140,6 +147,14 @@ public class GameScreen extends ScreenAdapter {
             backgroundView.move();
             gameSession.updateScore();
             scoreTextView.setText("Score: " + gameSession.getScore());
+            // Обновляем отображение комбо
+            if (gameSession.getCombo() >= 2) {
+                comboTextView.setText("COMBO: " + gameSession.getCombo() +
+                        " (x" + gameSession.getComboMultiplier() + ")");
+                comboTextView.setTextColor(Color.YELLOW); // Цвет
+            } else {
+                comboTextView.setText("");
+            }
             liveView.setLeftLives(shipObject.getLiveLeft());
 
             myGdxGame.stepWorld();
@@ -193,6 +208,8 @@ public class GameScreen extends ScreenAdapter {
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         topBlackoutView.draw(myGdxGame.batch);
         scoreTextView.draw(myGdxGame.batch);
+        comboTextView.draw(myGdxGame.batch); // Добавляем
+        bonusTextView.draw(myGdxGame.batch); // Добавляем
         liveView.draw(myGdxGame.batch);
         pauseButton.draw(myGdxGame.batch);
 
@@ -219,6 +236,14 @@ public class GameScreen extends ScreenAdapter {
 
             if (!trashArray.get(i).isAlive()) {
                 gameSession.destructionRegistration();
+                gameSession.addCombo(); // Добавляем комбо
+                // Проверяем, нужно ли показать бонус
+                if (gameSession.getCombo() >= 3) {
+                    bonusTextView.setText("COMBO x" + gameSession.getCombo() +
+                            " +" + gameSession.getBonusPoints() + "!");
+                } else {
+                    bonusTextView.setText("");
+                }
                 if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.explosionSound.play(0.2f);
             }
 
@@ -258,6 +283,7 @@ public class GameScreen extends ScreenAdapter {
 
         bulletArray.clear();
         gameSession.startGame();
+        gameSession.resetCombo(); // Сбрасываем комбо
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.samsung.gamestudio.components;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,6 +29,10 @@ public class TextView extends View{
         GlyphLayout glyphLayout = new GlyphLayout(font, text);
         width = glyphLayout.width;
         height = glyphLayout.height;
+    }
+
+    public void setTextColor(Color color) {
+        font.setColor(color);
     }
 
     @Override
